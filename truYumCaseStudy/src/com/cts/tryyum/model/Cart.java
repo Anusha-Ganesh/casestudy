@@ -5,4 +5,5 @@ import java.util.List;
 public class Cart {
      List<MenuItem> menuItemList;
      double total;
+     
 }
