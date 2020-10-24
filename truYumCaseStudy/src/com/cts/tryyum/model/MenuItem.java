@@ -8,10 +8,10 @@ public class MenuItem {
     private String name;
     private float price;
     private boolean active;
-    private LocalDateTime dateOfLaunch;
+    private Date dateOfLaunch;
     private String category;
     private boolean freeDelivery;
-	public MenuItem(long id, String name, float price, boolean active,LocalDateTime dateOfLaunch, String category,
+	public MenuItem(long id, String name, float price, boolean active,Date dateOfLaunch, String category,
 			boolean freeDelivery) {
 		super();
 		this.id = id;
@@ -46,10 +46,10 @@ public class MenuItem {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	public LocalDateTime getDateOfLaunch() {
+	public Date getDateOfLaunch() {
 		return dateOfLaunch;
 	}
-	public void setDateOfLaunch(LocalDateTime dateOfLaunch) {
+	public void setDateOfLaunch(Date dateOfLaunch) {
 		this.dateOfLaunch = dateOfLaunch;
 	}
 	public String getCategory() {
