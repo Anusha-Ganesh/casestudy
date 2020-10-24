@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class MenuItemDaoSqlImpl implements MenuItemDao{
 					String name=rs.getString(2);
 					float price=rs.getFloat(3);
 					boolean active=rs.getBoolean(4);
-					Date dateOfLaunch=DateUtil.convertToDate(rs.getString(1));
+					Date dateOfLaunch=rs.getDate(5);
 					String category=rs.getString(6);
 					boolean freeDelivery=rs.getBoolean(7);
 					MenuItem menu=new MenuItem(id, name, price, active, dateOfLaunch, category, freeDelivery);
@@ -39,7 +40,7 @@ public class MenuItemDaoSqlImpl implements MenuItemDao{
 				e.printStackTrace();
 			}
       	      
-			 catch (SQLException | ParseException e) {
+			 catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -51,6 +52,21 @@ public class MenuItemDaoSqlImpl implements MenuItemDao{
 		Connection con = null;
 		try {
 			con = ConnectionHandler.getConnection();
+			String sql="select * from menu_item where active=true and date_of_launch<now()";
+			PreparedStatement prep=con.prepareStatement(sql);
+			ResultSet rs=prep.executeQuery();
+			while(rs.next()) {
+				long id=rs.getLong(1);
+				String name=rs.getString(2);
+				float price=rs.getFloat(3);
+				boolean active=rs.getBoolean(4);
+				Date dateOfLaunch=rs.getDate(5);
+				String category=rs.getString(6);
+				boolean freeDelivery=rs.getBoolean(7);
+				MenuItem menu=new MenuItem(id, name, price, active, dateOfLaunch, category, freeDelivery);
+				lst.add(menu);
+			}
+				
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -58,35 +74,7 @@ public class MenuItemDaoSqlImpl implements MenuItemDao{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String sql="select * from menu_item where active=1 and date_of_launch>?";
-		//PreparedStatement ps=con.prepareStatement(sql);
-		//ps.setDate(1, ));
 		
-		try {
-			PreparedStatement prep=con.prepareStatement(sql);
-			Date today=new Date();
-			//String dt=today.toString();
-			prep.setDate(1, (java.sql.Date) today);
-			ResultSet rs=prep.executeQuery();
-			if(rs.next()) {
-				long id=rs.getLong(1);
-				String name=rs.getString(2);
-				float price=rs.getFloat(3);
-				boolean active=rs.getBoolean(4);
-				Date dateOfLaunch=DateUtil.convertToDate(rs.getString(5));
-				String category=rs.getString(6);
-				boolean freeDelivery=rs.getBoolean(7);
-				MenuItem menu=new MenuItem(id, name, price, active, dateOfLaunch, category, freeDelivery);
-				lst.add(menu);
-				
-				
-			}
-		}
-			
-		 catch (SQLException | ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return lst;
 	}
     public MenuItem getMenuItem(long menuItemId) {
@@ -110,12 +98,7 @@ public class MenuItemDaoSqlImpl implements MenuItemDao{
 			String name=rs.getString(2);
 			float price=rs.getFloat(3);
 			boolean active=rs.getBoolean(4);
-			try {
-				Date date= DateUtil.convertToDate(rs.getString(5));
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Date date= rs.getDate(5);
 			String category=rs.getString(6);
 			boolean freeDelivery=rs.getBoolean(7);
 			 
@@ -128,25 +111,28 @@ public class MenuItemDaoSqlImpl implements MenuItemDao{
 	@Override
 	public void modifyMenuItem(MenuItem menuItem) {
 		// TODO Auto-generated method stub
-		
-	}
-	public void editMenuItem(MenuItem menuItem) throws FileNotFoundException, SQLException {
-		Connection con=ConnectionHandler.getConnection();
+		Connection con=null;
 		String sql="update menu_item set item_name=?,item_price=?,active=?,date_of_launch=?,category=?,free_delivery=? where item_id=?";
 		try {
+			con=ConnectionHandler.getConnection();
 			PreparedStatement ps=con.prepareStatement(sql);
+			SimpleDateFormat formatter=new SimpleDateFormat("dd/MM/yyyy");
 			ps.setString(1, menuItem.getName());
 			ps.setFloat(2, menuItem.getPrice());
 			ps.setBoolean(3, menuItem.isActive());
-			ps.setDate(4,(java.sql.Date) menuItem.getDateOfLaunch());
+			ps.setString(4,formatter.format(menuItem.getDateOfLaunch()));
 			ps.setString(5, menuItem.getCategory());
 			ps.setBoolean(6, menuItem.isFreeDelivery());
 			ps.setLong(7, menuItem.getId());
 			int r=ps.executeUpdate();
 			ps.clearParameters();
-		} catch (SQLException e) {
+		} catch (SQLException | FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	public void editMenuItem(MenuItem menuItem) throws FileNotFoundException, SQLException {
+		
 	}
 }

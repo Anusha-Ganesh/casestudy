@@ -20,12 +20,14 @@ public class CartDaoSqlImpl {
 		Connection con=null;
 		try {
 			con=ConnectionHandler.getConnection();
-			String sql="insert into cart values(?,?)";
+			String sql="INSERT INTO CART(USER_ID, ITEM_ID) VALUES (?, ?)";
 			PreparedStatement ps=con.prepareStatement(sql);
 			ps.setLong(1, userId);
 			ps.setLong(2, menuItemId);
-			int r=ps.executeUpdate();
-			ps.clearParameters();
+			if(ps.executeUpdate()>0)
+				System.out.println("Query Successful");
+			else
+				System.out.println("Query not completed");
 			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -35,24 +37,26 @@ public class CartDaoSqlImpl {
 			e.printStackTrace();
 		}
 	}
-	public List<MenuItem> getAllCartItems(long userId){
+	public List<MenuItem> getAllCartItems(long userId) throws CartEmptyException{
 		Connection con=null;
-		List<MenuItem> allCart=null;
+		List<MenuItem> allCart=new ArrayList<MenuItem>();
 		try {
 			con=ConnectionHandler.getConnection();
 			Cart cart=new Cart(allCart, 0);
-			String sql="select * from cart,menu_item where cart.item_id=menu_item.item_id";
+			String sql="select menu_item.item_id,item_name,item_price,active,date_of_launch,category,free_delivery from cart,menu_item where cart.item_id=menu_item.item_id and user_id=?";
 			PreparedStatement ps=con.prepareStatement(sql);
+			ps.setLong(1, userId);
 			ResultSet rs=ps.executeQuery();
 			while(rs.next()) {
 				long id=rs.getLong(1);
 				String itemName=rs.getString(2);
 				float price=rs.getFloat(3);
 				boolean active=rs.getBoolean(4);
-				Date dateOfLaunch=DateUtil.convertToDate(rs.getString(5));
+				Date dateOfLaunch=rs.getDate(5);
 				String category=rs.getString(6);
 				boolean free=rs.getBoolean(7);
-	            allCart.add(new MenuItem(id, itemName, price, active, dateOfLaunch, category, free));	
+				MenuItem item=new MenuItem(id, itemName, price, active, dateOfLaunch, category, free);
+	            allCart.add(item);	
 			}
 			cart.setMenuItemList(allCart);
 			double total=0;
@@ -69,9 +73,6 @@ public class CartDaoSqlImpl {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		return allCart;
@@ -84,7 +85,10 @@ public class CartDaoSqlImpl {
 			PreparedStatement ps=con.prepareStatement(sql);
 			ps.setLong(1, userId);
 			ps.setLong(2, menuItemId);
-			int r=ps.executeUpdate();
+			if(ps.executeUpdate()>0)
+			System.out.println("Updated");
+			else
+				System.out.println("Not Updated");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

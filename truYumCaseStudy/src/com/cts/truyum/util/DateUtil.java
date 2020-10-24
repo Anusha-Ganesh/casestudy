@@ -7,8 +7,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateUtil {
-      public static Date convertToDate(String date) throws ParseException {
+      public static Date convertToDate(String date) {
+    	  Date parseDate=new Date();
+    	  SimpleDateFormat format=new SimpleDateFormat("dd/MM/yyyy");
     	  
-    	  return new SimpleDateFormat("dd/MM/yyyy").parse(date);
+    		  try {
+				parseDate=format.parse(date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		  
+	        return parseDate;
+    	  
+    	  
       }
 }

@@ -18,16 +18,11 @@ public class MenuItemDaoCollectionImpl implements MenuItemDao{
 		super();
 		if(menuItems==null) {
 			menuItems=new ArrayList<MenuItem>();
-			try {
-				menuItems.add(new MenuItem(1, "Sandwitch", 90.00f,true,new DateUtil().convertToDate("15/03/2017") , "Main Course", true));
-				menuItems.add(new MenuItem(2, "Burger", 129.00f,true,new DateUtil().convertToDate("23/12/2017") , "Main Course", false));
-				menuItems.add(new MenuItem(3, "Pizza", 149.00f,true,new DateUtil().convertToDate("21/08/2018") , "Main Course", false));
-				menuItems.add(new MenuItem(4, "French Fries", 57.00f,false,new DateUtil().convertToDate("02/07/2017") , "Starters", true));
-				menuItems.add(new MenuItem(5, "Chocolate Brownie", 32.00f,true,new DateUtil().convertToDate("02/11/2022") , "Dessert", true));
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			menuItems.add(new MenuItem(1, "Sandwitch", 90.00f,true,new DateUtil().convertToDate("15/03/2017") , "Main Course", true));
+			menuItems.add(new MenuItem(2, "Burger", 129.00f,true,new DateUtil().convertToDate("23/12/2017") , "Main Course", false));
+			menuItems.add(new MenuItem(3, "Pizza", 149.00f,true,new DateUtil().convertToDate("21/08/2018") , "Main Course", false));
+			menuItems.add(new MenuItem(4, "French Fries", 57.00f,false,new DateUtil().convertToDate("02/07/2017") , "Starters", true));
+			menuItems.add(new MenuItem(5, "Chocolate Brownie", 32.00f,true,new DateUtil().convertToDate("02/11/2022") , "Dessert", true));
 			
 		}
 	}
@@ -83,7 +78,7 @@ public class MenuItemDaoCollectionImpl implements MenuItemDao{
 	public MenuItem getMenuItem(long menuItemId) {
 		// TODO Auto-generated method stub
 		MenuItem item=null;
-		System.out.println("\n");
+		//System.out.println("\n");
 		for (MenuItem m:menuItems) {
 			if(m.getId()==menuItemId)
 				item=m;
